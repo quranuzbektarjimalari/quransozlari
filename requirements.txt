@@ -1,5 +1,3 @@
-python-telegram-bot==20.8
-flask
-pandas
-openpyxl
-requests
+python-telegram-bot[webhooks]
+Flask
+gunicorn
