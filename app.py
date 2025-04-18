@@ -54,10 +54,12 @@ telegram_app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, downloa
 
 @app.route(f'/{API_KEY}', methods=['POST'])
 def webhook():
-    # Webhookdan kelgan so'rovni qabul qilish
     update = Update.de_json(request.get_json(force=True), telegram_app.bot)
     telegram_app.update_queue.put(update)
     return 'OK'
+# Telegram Webhookni o'rnatish
+telegram_app.bot.set_webhook(f'https://quransozlari.onrender.com/{API_KEY}')
+
 
 @app.route('/')
 def index():
