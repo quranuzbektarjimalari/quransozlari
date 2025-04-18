@@ -1,6 +1,4 @@
-python-telegram-bot==20.8
-flask
+Flask
 pandas
 requests
-openpyxl
-python-dotenv
+python-telegram-bot==20.8
