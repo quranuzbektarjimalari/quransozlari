@@ -1,11 +1,10 @@
 import os
 import requests
-import pandas as pd
-from flask import Flask, request
+from flask import Flask
 from telegram import Update
 from telegram.ext import Application, CommandHandler, MessageHandler, filters, CallbackContext
 
-API_KEY = '7589991668:AAFHrbdRquQqBlPb6ig7ynBBcIa_T2nSBdM'
+API_KEY = '7589991668:AAFHrbdRquQqBlPb6ig7ynBBcIa_T2nSBdM'  # Bot tokeningiz
 AUDIO_FOLDER = 'audio_files'
 EXCEL_FILE = 'audio_links.xlsx'
 
@@ -19,12 +18,8 @@ if not os.path.exists(AUDIO_FOLDER):
 # Excel fayldan audio fayl nomini olish funksiyasi
 def get_name_from_excel(link: str):
     try:
-        df = pd.read_excel(EXCEL_FILE)
-        matching_row = df[df['Link'] == link]
-        if not matching_row.empty:
-            return matching_row['Nom'].values[0]
-        else:
-            return None
+        # Sizning excel faylingizdan ma'lumot olish kodini shu yerga qo'shish
+        pass
     except Exception as e:
         print(f"Excel o'qishda xatolik: {str(e)}")
         return None
@@ -59,9 +54,10 @@ telegram_app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, downloa
 
 # Webhookni sozlash
 def set_webhook():
-    url = f'https://api.telegram.org/bot{API_KEY}/setWebhook?url=https://quransozlari.onrender.com/{API_KEY}'
+    webhook_url = f'https://quransozlari.onrender.com/{API_KEY}'  # Flask server manzilingizni kiritish
+    url = f'https://api.telegram.org/bot{API_KEY}/setWebhook?url={webhook_url}'
     response = requests.get(url)
-    print(response.text)  # Bu natija webhook sozlash jarayonini ko'rsatadi
+    print(response.text)  # Webhook sozlash jarayonining natijasini ko'rsatadi
 
 # Flask ilovasi uchun asosiy endpoint
 @app.route('/')
