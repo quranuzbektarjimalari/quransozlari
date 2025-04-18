@@ -1,6 +1,0 @@
-Flask==2.1.2
-requests==2.27.1
-pandas==1.5.3
-python-telegram-bot==20.0
-numpy==1.23.5
-Werkzeug==2.1.2  # Flask bilan mos versiya
