@@ -1,5 +1,12 @@
 import os
 import requests
+
+API_KEY = '7589991668:AAFHrbdRquQqBlPb6ig7ynBBcIa_T2nSBdM'  # Bot tokeningizni bu yerga qo'shing
+url = f'https://api.telegram.org/bot{API_KEY}/setWebhook?url=https://quransozlari.onrender.com/{API_KEY}'
+
+response = requests.get(url)
+print(response.text)
+
 import pandas as pd
 from flask import Flask, request
 from telegram import Update
@@ -57,6 +64,7 @@ def webhook():
     update = Update.de_json(request.get_json(force=True), telegram_app.bot)
     telegram_app.update_queue.put(update)
     return 'OK'
+
 # Telegram Webhookni o'rnatish
 telegram_app.bot.set_webhook(f'https://quransozlari.onrender.com/{API_KEY}')
 
@@ -66,5 +74,5 @@ def index():
     return "Bot ishlayapti!"
 
 if __name__ == '__main__':
-    # Flask serverini ishga tushurish
     app.run(debug=True, host='0.0.0.0', port=5000)
+
