@@ -34,6 +34,10 @@ def webhook():
         bot.send_message(chat_id=chat_id, text="Assalomu alaykum! Menga havolani yuboring, men sizga arabcha so‘zli audiolarni qaytaraman.")
         return 'OK'
 
+    # Yuborilgan linkni chatdan o'chirish
+    bot.delete_message(chat_id=chat_id, message_id=update.message.message_id)
+
+    # Excel faylda linkni qidirish
     matched = df[df['Link'] == text]
 
     if not matched.empty:
@@ -42,7 +46,9 @@ def webhook():
         response = requests.get(audio_url)
         audio_file = BytesIO(response.content)
         audio_file.name = 'audio.mp3'
-        bot.send_audio(chat_id=chat_id, audio=audio_file, caption=nom)
+        
+        # Audio yuborish va izoh (nom va link)
+        bot.send_audio(chat_id=chat_id, audio=audio_file, caption=f"{nom}\n{audio_url}")
     else:
         bot.send_message(chat_id=chat_id, text="Bu havola topilmadi. Iltimos, to‘g‘ri link yuboring.")
 
