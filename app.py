@@ -3,9 +3,9 @@ from telegram import Bot, Update
 import pandas as pd
 import requests
 from io import BytesIO
+import os
 
-# Bu yerga TOKEN to'g'ridan-to'g'ri yozilgan
-TOKEN = '7589991668:AAFHrbdRquQqBlPb6ig7ynBBcIa_T2nSBdM'
+TOKEN = os.getenv('TOKEN')  # TOKENni muhit o'zgaruvchisidan oladi
 bot = Bot(token=TOKEN)
 
 # Excel faylni yuklash
@@ -22,7 +22,7 @@ def index():
 def set_webhook():
     webhook_url = f"https://quransozlari.onrender.com/{TOKEN}"
     success = bot.set_webhook(url=webhook_url)
-    return "Webhook set: " + str(success)
+    return f"Webhook set: {success}"
 
 @app.route(f'/{TOKEN}', methods=['POST'])
 def webhook():
@@ -30,6 +30,7 @@ def webhook():
     chat_id = update.message.chat.id
     text = update.message.text.strip()
 
+    # Agar /start komandasi yuborilgan bo'lsa
     if text == "/start":
         bot.send_message(chat_id=chat_id, text="Assalomu alaykum! Menga havolani yuboring, men sizga arabcha so‘zli audiolarni qaytaraman.")
         return 'OK'
