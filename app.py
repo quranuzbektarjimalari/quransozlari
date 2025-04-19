@@ -1,18 +1,17 @@
+import os
+from flask import Flask, request
+import telegram
 import pandas as pd
 import requests
 from io import BytesIO
-from flask import Flask, request
-import telegram
 
-# Telegram bot token
-TOKEN = '7589991668:AAFHrbdRquQqBlPb6ig7ynBBcIa_T2nSBdM'
+TOKEN = os.environ.get('TOKEN')  # Telegram bot tokenini olish
 bot = telegram.Bot(token=TOKEN)
 
 # Excel faylni yuklash
 df = pd.read_excel('audio_links.xlsx', header=None)
-df.columns = ['Nom', 'Link']  # Ustun nomlarini qo‘shish
+df.columns = ['Nom', 'Link']  # Ustun nomlari qo‘shiladi
 
-# Flask ilovasi
 app = Flask(__name__)
 
 @app.route('/')
@@ -44,15 +43,6 @@ def webhook():
 
     return 'OK'
 
-# Webhook URL o'rnatish
-@app.before_first_request
-def set_webhook():
-    webhook_url = f'https://<your-render-app-url>/{TOKEN}'
-    url = f"https://api.telegram.org/bot{TOKEN}/setWebhook"
-    response = requests.get(url, params={'url': webhook_url})
-    print(response.json())
-
 if __name__ == '__main__':
-    import os
-    port = int(os.environ.get('PORT', 5000))
-    app.run(host='0.0.0.0', port=port)
+    port = int(os.environ.get('PORT', 5000))  # PORT o'zgaruvchisini olish
+    app.run(host='0.0.0.0', port=port)  # Flask serverni ishga tushurish
