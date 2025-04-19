@@ -1,11 +1,10 @@
-import os
 from flask import Flask, request
 import telegram
 import pandas as pd
 import requests
 from io import BytesIO
 
-TOKEN = os.environ.get('TOKEN')  # Telegram bot tokenini olish
+TOKEN = '7589991668:AAFHrbdRquQqBlPb6ig7ynBBcIa_T2nSBdM'
 bot = telegram.Bot(token=TOKEN)
 
 # Excel faylni yuklash
@@ -43,6 +42,8 @@ def webhook():
 
     return 'OK'
 
+# Gunicorn serveri ishga tushiriladi
 if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 5000))  # PORT o'zgaruvchisini olish
-    app.run(host='0.0.0.0', port=port)  # Flask serverni ishga tushurish
+    import os
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port)
