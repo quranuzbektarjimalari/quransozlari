@@ -1,7 +1,8 @@
 from flask import Flask, request
 import telegram
+import os
 
-TOKEN = '7589991668:AAFHrbdRquQqBlPb6ig7ynBBcIa_T2nSBdM'  # o'z tokeningizni qo‘ying
+TOKEN = '7589991668:AAFHrbdRquQqBlPb6ig7ynBBcIa_T2nSBdM'
 bot = telegram.Bot(token=TOKEN)
 
 app = Flask(__name__)
@@ -20,4 +21,5 @@ def webhook():
     return 'OK'
 
 if __name__ == '__main__':
-    app.run()
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port)
