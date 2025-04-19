@@ -4,7 +4,7 @@ import pandas as pd
 import requests
 from io import BytesIO
 
-# Bu yerga TOKEN to'g'ridan-to'g'ri yozilgan
+# TOKEN
 TOKEN = '7589991668:AAFHrbdRquQqBlPb6ig7ynBBcIa_T2nSBdM'
 bot = Bot(token=TOKEN)
 
@@ -26,40 +26,51 @@ def set_webhook():
 
 @app.route(f'/{TOKEN}', methods=['POST'])
 def webhook():
-    update = Update.de_json(request.get_json(force=True), bot)
-    chat_id = update.message.chat.id
-    text = update.message.text.strip()
+    data = request.get_json(force=True)
+    update = Update.de_json(data, bot)
 
-    # Agar start komandasini yuborsa
-    if text == "/start":
-        bot.send_message(chat_id=chat_id, text="Assalomu alaykum! Menga havolani yuboring, men sizga arabcha so‘zli audiolarni qaytaraman.")
+    chat_id = None
+    text = None
+    message_id = None
+
+    # Shaxsiy chat
+    if update.message:
+        chat_id = update.message.chat.id
+        text = update.message.text.strip() if update.message.text else None
+        message_id = update.message.message_id
+
+        if text == "/start":
+            bot.send_message(chat_id=chat_id, text="Assalomu alaykum! Link yuboring, men sizga audio qaytaraman.")
+            return 'OK'
+
+    # Kanal xabari
+    elif update.channel_post:
+        chat_id = update.channel_post.chat.id
+        text = update.channel_post.text.strip() if update.channel_post.text else None
+        message_id = update.channel_post.message_id
+
+    # Agar text yoki chat_id yo'q bo'lsa, tugatamiz
+    if not text or not chat_id:
         return 'OK'
 
-    # Agar sport komandasini yuborsa
-    elif text == "/sport":
-        bot.send_message(chat_id=chat_id, text="Sportga oid audiolarni yuborishga tayyorman!")
-        return 'OK'
-
-    # Yuborilgan linkni chatdan o'chirish
+    # Xabarni o'chirishga urinish (shaxsiy yoki kanal)
     try:
-        bot.delete_message(chat_id=chat_id, message_id=update.message.message_id)
-    except Exception as e:
-        print(f"Xatolik: {e}")
+        bot.delete_message(chat_id=chat_id, message_id=message_id)
+    except:
+        pass  # Xatolik bo‘lsa (masalan, kanalga ruxsat yo‘q), davom etadi
 
-    # Excel faylda linkni qidirish
+    # Exceldan linkni qidirish
     matched = df[df['Link'] == text]
-
     if not matched.empty:
         nom = matched.iloc[0]['Nom']
         audio_url = matched.iloc[0]['Link']
         response = requests.get(audio_url)
         audio_file = BytesIO(response.content)
         audio_file.name = 'audio.mp3'
-        
-        # Audio yuborish va izoh (nom va link)
-        bot.send_audio(chat_id=chat_id, audio=audio_file, caption=f"{nom}\n{audio_url}")
+        caption = f"{nom}\n{audio_url}"
+        bot.send_audio(chat_id=chat_id, audio=audio_file, caption=caption)
     else:
-        bot.send_message(chat_id=chat_id, text="Bu havola topilmadi. Iltimos, to‘g‘ri link yuboring.")
+        bot.send_message(chat_id=chat_id, text="Bu link topilmadi. Iltimos, to‘g‘ri link yuboring.")
 
     return 'OK'
 
