@@ -5,7 +5,7 @@ import requests
 from io import BytesIO
 import os
 
-# ✅ Flask ilovasi
+# ✅ Flask app
 app = Flask(__name__)
 
 # ✅ Environment variables
@@ -13,25 +13,25 @@ TOKEN = os.environ.get('TOKEN')
 BASE_WEBHOOK_URL = os.environ.get('BASE_WEBHOOK_URL')
 
 if not TOKEN:
-    raise ValueError("❗️ Environment variable 'TOKEN' is not set.")
+    raise ValueError("❗️ TOKEN environment variable not set.")
 if not BASE_WEBHOOK_URL:
-    raise ValueError("❗️ Environment variable 'BASE_WEBHOOK_URL' is not set.")
+    raise ValueError("❗️ BASE_WEBHOOK_URL environment variable not set.")
 
 bot = Bot(token=TOKEN)
 
-# ✅ Excel faylni ochish
+# ✅ Excel faylni yuklash
 try:
     df = pd.read_excel('audio_links.xlsx', header=None)
     df.columns = ['Nom', 'Link']
-    print(f"✅ Excel yuklandi. {len(df)} ta yozuv topildi.")
+    print(f"✅ Excel yuklandi. {len(df)} ta yozuv.")
 except Exception as e:
     print(f"❗️ Excel faylni ochishda xato: {e}")
     df = pd.DataFrame(columns=['Nom', 'Link'])
 
-# ✅ Index
+# ✅ Index route
 @app.route('/')
 def index():
-    return '✅ Bot ishga tushdi!'
+    return '✅ Railway-da Telegram bot server ishlayapti!'
 
 # ✅ /setwebhook route
 @app.route('/setwebhook')
@@ -39,7 +39,7 @@ def set_webhook():
     webhook_url = f"{BASE_WEBHOOK_URL}/{TOKEN}"
     try:
         success = bot.set_webhook(url=webhook_url)
-        return f"✅ Webhook set: {success}\nURL: {webhook_url}"
+        return f"✅ Webhook o'rnatildi: {success}\nURL: {webhook_url}"
     except Exception as e:
         return f"❗️ Webhook o'rnatishda xato: {e}"
 
@@ -60,10 +60,7 @@ def webhook():
         message_id = update.message.message_id
 
         if text == "/start":
-            bot.send_message(
-                chat_id=chat_id,
-                text="Assalomu alaykum! Link yuboring, men sizga audio qaytaraman."
-            )
+            bot.send_message(chat_id=chat_id, text="Assalomu alaykum! Link yuboring, men sizga audio qaytaraman.")
             return 'OK'
 
     # Kanal post
@@ -90,10 +87,8 @@ def webhook():
         try:
             response = requests.get(audio_url)
             response.raise_for_status()
-
             audio_file = BytesIO(response.content)
             audio_file.name = 'audio.mp3'
-
             caption = f"{nom}\n{audio_url}"
             bot.send_audio(chat_id=chat_id, audio=audio_file, caption=caption)
         except Exception as e:
@@ -104,7 +99,7 @@ def webhook():
 
     return 'OK'
 
-# ✅ Flaskni ishga tushurish
+# ✅ Run Flask
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port)
