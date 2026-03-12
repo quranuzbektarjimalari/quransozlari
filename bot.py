@@ -53,9 +53,6 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not matched.empty:
         nom = matched.iloc[0]['Nom']
         audio_url = matched.iloc[0]['Link']
-        
-        status_msg = await context.bot.send_message(chat_id=chat_id, text="🎵 Audio tayyorlanmoqda...")
-        
         try:
             response = requests.get(audio_url, timeout=30)
             response.raise_for_status()
@@ -78,7 +75,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
             )
     else:
         # Link topilmasa, bot 5 soniyadan keyin o'chib ketadigan xabar yuborishi mumkin
-        not_found = await context.bot.send_message(chat_id=chat_id, text="⚠️ Bu link bazada mavjud emas.")
+        not_found = await context.bot.send_message(chat_id=chat_id, text="⚠️ Hech narsa topilmadi.")
         # Ixtiyoriy: xatolik xabarini ham 5 soniyadan keyin o'chirib yuborish (chat toza turishi uchun)
         context.job_queue.run_once(lambda c: context.bot.delete_message(chat_id, not_found.message_id), 5)
 
@@ -93,3 +90,4 @@ if __name__ == '__main__':
         
         print("🚀 Bot Railway'da linklarni o'chirish rejimi bilan ishga tushdi...")
         application.run_polling()
+
