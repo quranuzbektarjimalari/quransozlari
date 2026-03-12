@@ -6,7 +6,7 @@ from telegram import Update
 from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes
 
 # 1. Sozlamalar
-TOKEN = "SIZNING_BOT_TOKENINGIZNI_SHU_YERGA_YOZING"
+TOKEN = os.environ.get('TOKEN') # Railway Variables'dan oladi
 EXCEL_FILE = 'audio_links.xlsx'
 
 # Loglarni sozlash (xatolarni ko'rish uchun)
@@ -85,3 +85,4 @@ if __name__ == '__main__':
 
     print("🚀 Bot ishga tushdi (Polling)...")
     application.run_polling()
+
